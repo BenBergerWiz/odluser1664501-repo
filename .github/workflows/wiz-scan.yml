@@ -28,8 +28,12 @@ jobs:
         run: |
           # Notice: No --id or --secret flags here! 
           # The CLI pulls them from the 'env' block above automatically.
-          ./wizcli iac scan --path . --policy "Default IaC policy"
+          ./wizcli iac scan --path . --policy "Default IaC policy" --format sarif --output wiz-results.sarif
           
-      - name: Run Wiz Directory Scan
-        run: |
-          ./wizcli dir scan --path .
+      - name: Upload SARIF to GitHub
+        uses: github/codeql-action/upload-sarif@v3
+        if: always() # Upload results even if the scan found issues
+        with:
+          sarif_file: wiz-results.sarif
+
+      
