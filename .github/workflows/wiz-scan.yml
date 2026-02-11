@@ -19,7 +19,7 @@ jobs:
           chmod +x wizcli
 
       - name: Authenticate Wiz CLI
-        run: ./wizcli auth --id ${{ secrets.WIZ_CLIENT_ID }} --secret ${{ secrets.WIZ_CLIENT_SECRET }} --url https://api.us20.app.wiz.io
+        run: ./wizcli auth --id ${{ secrets.WIZ_CLIENT_ID }} --secret ${{ secrets.WIZ_CLIENT_SECRET }} --api-url https://api.us20.app.wiz.io
 
       - name: Run Wiz IaC Scan
         run: |
