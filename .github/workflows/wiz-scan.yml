@@ -9,6 +9,11 @@ on:
 jobs:
   wiz-scan:
     runs-on: ubuntu-latest
+    env:
+      # These variables will be available to all steps in this job
+      WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
+      WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
@@ -18,20 +23,10 @@ jobs:
           curl -o wizcli https://downloads.wiz.io/v1/wizcli/latest/wizcli-linux-amd64
           chmod +x wizcli
 
-      - name: Authenticate Wiz CLI
-        run: |
-          ./wizcli auth --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
-        env:
-          WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
-          WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
-          WIZ_API_URL: https://api.us20.wiz.io
-
       - name: Run Wiz IaC Scan
         run: |
-          # This scans for misconfigurations in Terraform, CloudFormation, Kubernetes, etc.
-          ./wizcli iac scan --path . --policy "Default IaC policy"
+          ./wizcli iac scan --path . --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
           
-      - name: Run Wiz Directory Scan (Vulnerabilities & Secrets)
+      - name: Run Wiz Directory Scan
         run: |
-          # This scans the directory for secrets and vulnerable libraries
-          ./wizcli dir scan --path .
+          ./wizcli dir scan --path . --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
