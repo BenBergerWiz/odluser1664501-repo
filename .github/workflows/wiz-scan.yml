@@ -9,10 +9,11 @@ on:
 jobs:
   wiz-scan:
     runs-on: ubuntu-latest
+    # This 'env' block makes these variables available to every command below
     env:
-      # These variables will be available to all steps in this job
       WIZ_CLIENT_ID: ${{ secrets.WIZ_CLIENT_ID }}
       WIZ_CLIENT_SECRET: ${{ secrets.WIZ_CLIENT_SECRET }}
+      WIZ_API_URL: https://api.us20.wiz.io
 
     steps:
       - name: Checkout code
@@ -25,8 +26,10 @@ jobs:
 
       - name: Run Wiz IaC Scan
         run: |
-          ./wizcli iac scan --path . --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+          # Notice: No --id or --secret flags here! 
+          # The CLI pulls them from the 'env' block above automatically.
+          ./wizcli iac scan --path . --policy "Default IaC policy"
           
       - name: Run Wiz Directory Scan
         run: |
-          ./wizcli dir scan --path . --id "$WIZ_CLIENT_ID" --secret "$WIZ_CLIENT_SECRET"
+          ./wizcli dir scan --path .
